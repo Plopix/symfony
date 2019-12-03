@@ -18,24 +18,17 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 require_once __DIR__.'/../Fixtures/includes/autowiring_classes.php';
 
+if (\PHP_VERSION_ID >= 70400) {
+    require_once __DIR__.'/../Fixtures/includes/autowiring_classes_74.php';
+}
+
+/**
+ * @requires PHP 7.4
+ */
 class AutowireRequiredPropertiesPassTest extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-        if (\PHP_VERSION_ID >= 70400) {
-            require_once __DIR__.'/../Fixtures/includes/autowiring_classes_74.php';
-        }
-    }
-
     public function testInjection()
     {
-        if (\PHP_VERSION_ID < 70400) {
-            $this->assertTrue(true);
-
-            return;
-        }
-
         $container = new ContainerBuilder();
         $container->register(Bar::class);
         $container->register(A::class);

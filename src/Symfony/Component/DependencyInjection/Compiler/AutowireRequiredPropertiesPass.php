@@ -45,17 +45,15 @@ class AutowireRequiredPropertiesPass extends AbstractRecursivePass
             if (false === $doc = $reflectionProperty->getDocComment()) {
                 continue;
             }
-            if (false === stripos($doc, '@required') &&
-                preg_match('#(?:^/\*\*|\n\s*+\*)\s*+@required(?:\s|\*/$)#i', $doc)) {
+            if (false === stripos($doc, '@required') || !preg_match('#(?:^/\*\*|\n\s*+\*)\s*+@required(?:\s|\*/$)#i', $doc)) {
                 continue;
             }
-            if (!\array_key_exists($reflectionProperty->getName(), $properties)) {
-                $type = $reflectionProperty->getType()->getName();
-                $value->setProperty(
-                    $reflectionProperty->getName(),
-                    new TypedReference($type, $type, ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $reflectionProperty->getName())
-                );
+            if (\array_key_exists($name = $reflectionProperty->getName(), $properties)) {
+                continue;
             }
+
+            $type = $reflectionProperty->getType()->getName();
+            $value->setProperty($name, new TypedReference($type, $type, ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $name));
         }
 
         return $value;
